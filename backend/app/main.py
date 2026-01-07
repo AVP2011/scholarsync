@@ -4,6 +4,7 @@ from backend.app.db.base import Base
 import backend.app.models  # noqa
 
 from backend.app.api.auth import router as auth_router
+from backend.app.api.users import router as users_router
 
 app = FastAPI(title="ScholarSync API")
 
@@ -13,6 +14,7 @@ def startup_event():
     print("✅ Tables created / verified")
 
 app.include_router(auth_router)
+app.include_router(users_router)
 
 @app.get("/")
 def root():
