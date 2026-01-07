@@ -5,6 +5,7 @@ import backend.app.models  # noqa
 
 from backend.app.api.auth import router as auth_router
 from backend.app.api.users import router as users_router
+from backend.app.api.scrape import router as scrape_router
 
 app = FastAPI(title="ScholarSync API")
 
@@ -15,6 +16,7 @@ def startup_event():
 
 app.include_router(auth_router)
 app.include_router(users_router)
+app.include_router(scrape_router)
 
 @app.get("/")
 def root():
