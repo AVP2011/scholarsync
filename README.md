@@ -1,0 +1,1 @@
+“Backend auth + scraping pipeline completed. Scraper ingests opportunities, scores trust, and stores relational data.”
