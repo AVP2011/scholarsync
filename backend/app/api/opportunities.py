@@ -11,33 +11,68 @@ from backend.app.schemas.stats import OpportunityStats
 router = APIRouter(prefix="/opportunities", tags=["Opportunities"])
 
 
-# ---------------------------
-# LIST OPPORTUNITIES
-# ---------------------------
+# =========================================================
+# LIST OPPORTUNITIES (FILTER + PAGINATION)
+# =========================================================
 @router.get("/", response_model=list[OpportunityOut])
 def list_opportunities(
     trust: str | None = Query(None, description="high | medium | low"),
+    company: str | None = Query(None, description="Company name"),
+    min_trust_score: int | None = Query(None, ge=0, le=100),
+    type: str | None = Query(None, description="internship | fellowship | job"),
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db),
 ):
-    query = db.query(Opportunity)
+    """
+    Fetch opportunities with optional filters.
+    Supports pagination and sorting by trust score.
+    """
 
+    query = (
+        db.query(Opportunity)
+        .join(Company, Opportunity.company_id == Company.id)
+    )
+
+    # ------------------
+    # Filters
+    # ------------------
     if trust:
         query = query.filter(
-            Opportunity.trust_label.isnot(None),
             func.lower(Opportunity.trust_label) == trust.lower()
         )
 
+    if company:
+        query = query.filter(
+            Company.name.ilike(f"%{company}%")
+        )
+
+    if min_trust_score is not None:
+        query = query.filter(
+            Opportunity.trust_score >= min_trust_score
+        )
+
+    if type:
+        query = query.filter(
+            func.lower(Opportunity.type) == type.lower()
+        )
+
+    # ------------------
+    # Pagination + Order
+    # ------------------
     offset = (page - 1) * limit
 
-    results = (
+    opportunities = (
         query
+        .order_by(Opportunity.trust_score.desc())
         .offset(offset)
         .limit(limit)
         .all()
     )
 
+    # ------------------
+    # Response Mapping
+    # ------------------
     return [
         OpportunityOut(
             id=o.id,
@@ -48,13 +83,19 @@ def list_opportunities(
             trust_label=o.trust_label,
             company_name=o.company.name if o.company else "Unknown",
         )
-        for o in results
+        for o in opportunities
     ]
-# ---------------------------
-# STATS API
-# ---------------------------
+
+
+# =========================================================
+# OPPORTUNITY STATS (DASHBOARD)
+# =========================================================
 @router.get("/stats", response_model=OpportunityStats)
 def opportunity_stats(db: Session = Depends(get_db)):
+    """
+    Aggregated stats for dashboard usage.
+    """
+
     total = db.query(func.count(Opportunity.id)).scalar()
 
     high = db.query(Opportunity).filter(
