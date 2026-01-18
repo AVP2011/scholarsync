@@ -44,7 +44,6 @@ Sample API requests and responses can be found here:
 
 ## ▶️ Running the Backend
 
-```bash
 # Activate virtual environment
 source venv/bin/activate  # or venv\Scripts\activate on Windows
 
@@ -52,8 +51,7 @@ source venv/bin/activate  # or venv\Scripts\activate on Windows
 uvicorn backend.app.main:app --reload
 Backend will be available at:
 
-cpp
-Copy code
+ 
 http://127.0.0.1:8000
 🧠 Design Philosophy
 ScholarSync is designed as a data-first system:

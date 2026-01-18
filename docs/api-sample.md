@@ -13,8 +13,7 @@ is exposed in a predictable and scalable API format.
 ### Request
 GET /opportunities?page=1&limit=5&trust=high
 
-bash
-Copy code
+ 
 
 ### Response
 ```json
@@ -49,8 +48,7 @@ Designed to support future ranking & filtering logic
 
 🔹 GET /opportunities/stats
 Request
-bash
-Copy code
+ 
 GET /opportunities/stats
 Response
 json
@@ -73,5 +71,4 @@ Helps users quickly assess platform credibility
 
 Supports future analytics and ML-based ranking
 
-yaml
-Copy code
+  
