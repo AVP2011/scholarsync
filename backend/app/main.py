@@ -10,6 +10,7 @@ from backend.app.api.users import router as users_router
 from backend.app.api.scrape import router as scrape_router
 from backend.app.api.opportunities import router as opportunities_router
 from backend.app.api.trust import router as trust_router
+ 
 
 app = FastAPI(title="ScholarSync API")
 
