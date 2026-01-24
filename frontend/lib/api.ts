@@ -78,3 +78,16 @@ export async function registerUser(
 
   return res.json();
 }
+export async function analyzeTrust(url: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE}/trust/analyze`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    }
+  );
+
+  if (!res.ok) throw new Error("Trust analysis failed");
+  return res.json();
+}

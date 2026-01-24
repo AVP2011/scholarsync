@@ -1,6 +1,7 @@
- "use client";
+"use client";
 
 import Link from "next/link";
+import TrustAnalyzer from "@/components/TrustAnalyzer";
 
 export default function HomePage() {
   return (
@@ -32,6 +33,11 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* 🔥 Trust Analyzer + Charts Block */}
+      <section className="mt-12">
+        <TrustAnalyzer />
+      </section>
+
       {/* Quick Features */}
       <div className="grid md:grid-cols-3 gap-8 mt-16">
         <div className="p-6 bg-white shadow rounded-lg">
@@ -43,13 +49,13 @@ export default function HomePage() {
         <div className="p-6 bg-white shadow rounded-lg">
           <h3 className="text-xl font-semibold mb-2">📊 Trust Insights</h3>
           <p className="text-gray-600 text-sm">
-            Explore trust distribution, monthly trends, and top companies offering opportunities.
+            Explore trust distribution, monthly trends, and trust factors visually.
           </p>
         </div>
         <div className="p-6 bg-white shadow rounded-lg">
           <h3 className="text-xl font-semibold mb-2">🚀 Student Focused</h3>
           <p className="text-gray-600 text-sm">
-            Built for students to confidently discover scholarships, internships, and research projects.
+            Built for students to confidently analyze third-party opportunity links.
           </p>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { isAuthenticated } from "@/lib/auth";
 
 import OpportunityCard from "@/components/OpportunityCard";
 import TrustFilter from "@/components/TrustFilter";
+ 
 
 interface Opportunity {
   id: string;
@@ -53,6 +54,7 @@ export default function DiscoverPage() {
     <main className="max-w-6xl mx-auto px-6 py-10">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
         <h1 className="text-3xl font-bold">Discover Opportunities</h1>
+         
         <TrustFilter value={trust} onChange={setTrust} />
       </div>
 
