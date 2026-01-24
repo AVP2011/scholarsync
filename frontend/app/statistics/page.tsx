@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { fetchStats } from "@/lib/api";
 import StatsCard from "@/components/StatsCard";
+import DonutChart from "@/components/DonutChart";
+import TrustLineChart from "@/components/LineChart";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 
@@ -91,6 +93,14 @@ export default function StatisticsPage() {
           description="Score 0-39"
           color="red"
         />
+      </div>
+      <div className="grid md:grid-cols-2 gap-8">
+        <DonutChart
+          high={stats.high_trust}
+          medium={stats.medium_trust}
+          low={stats.low_trust}
+        />
+        <TrustLineChart />
       </div>
 
       {/* Top Companies */}

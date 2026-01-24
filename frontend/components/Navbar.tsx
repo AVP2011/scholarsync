@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 export default function Navbar() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [open , setOpen] = useState(false);
 
   useEffect(() => {
     // run only on client after mount
@@ -71,9 +72,22 @@ export default function Navbar() {
         </nav>
 
         {/* Mobile */}
-        <button className="md:hidden p-2 rounded hover:bg-gray-100">
-          <Menu className="w-6 h-6 text-gray-700" />
-        </button>
+        {open && (
+  <div className="md:hidden mt-4 flex flex-col gap-4 border-t pt-4">
+    <Link href="/discover">Discover</Link>
+    <Link href="/statistics">Statistics</Link>
+    <Link href="/auth/login">Sign In</Link>
+    <Link href="/auth/register" className="text-blue-600 font-semibold">
+      Get Started
+    </Link>
+  </div>
+)}
+        <button
+  onClick={() => setOpen(!open)}
+  className="md:hidden p-2 rounded hover:bg-gray-100"
+>
+  <Menu />
+</button>
       </div>
     </header>
   );

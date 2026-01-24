@@ -1,35 +1,65 @@
-// components/LineChart.tsx
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+"use client";
 
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
-const LineChart = ({ data }: { data: { months: string[]; high: number[]; medium: number[]; low: number[] } }) => {
-  const chartData = {
-    labels: data.months,
-    datasets: [
-      {
-        label: 'High Trust',
-        data: data.high,
-        borderColor: '#22c55e',
-        fill: false,
-      },
-      {
-        label: 'Medium Trust',
-        data: data.medium,
-        borderColor: '#facc15',
-        fill: false,
-      },
-      {
-        label: 'Low Trust',
-        data: data.low,
-        borderColor: '#ef4444',
-        fill: false,
-      },
-    ],
-  };
+const data = [
+  { month: "Jan", high: 8, medium: 3, low: 1 },
+  { month: "Feb", high: 10, medium: 4, low: 2 },
+  { month: "Mar", high: 14, medium: 5, low: 2 },
+  { month: "Apr", high: 18, medium: 6, low: 3 },
+  { month: "May", high: 22, medium: 7, low: 4 },
+  { month: "Jun", high: 28, medium: 8, low: 5 },
+];
 
-  return <Line data={chartData} />;
-};
+export default function TrustLineChart() {
+  return (
+    <div className="bg-white rounded-xl shadow p-6 mt-8">
+      <h3 className="text-lg font-semibold mb-4">Monthly Trust Trends</h3>
 
-export default LineChart;
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+
+          <Line
+            type="monotone"
+            dataKey="high"
+            stroke="#22c55e"
+            strokeWidth={3}
+            name="High Trust"
+          />
+          <Line
+            type="monotone"
+            dataKey="medium"
+            stroke="#f59e0b"
+            strokeWidth={3}
+            name="Medium Trust"
+          />
+          <Line
+            type="monotone"
+            dataKey="low"
+            stroke="#ef4444"
+            strokeWidth={3}
+            name="Low Trust"
+          />
+        </LineChart>
+      </ResponsiveContainer>
+
+      <p className="text-xs text-gray-500 mt-2">
+        Sample trend based on recent opportunity ingestion
+      </p>
+    </div>
+  );
+}

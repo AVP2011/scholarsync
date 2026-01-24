@@ -9,6 +9,7 @@ from backend.app.api.auth import router as auth_router
 from backend.app.api.users import router as users_router
 from backend.app.api.scrape import router as scrape_router
 from backend.app.api.opportunities import router as opportunities_router
+from backend.app.api.trust import router as trust_router
 
 app = FastAPI(title="ScholarSync API")
 
@@ -33,6 +34,7 @@ app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(scrape_router)
 app.include_router(opportunities_router)
+app.include_router(trust_router)
 
 @app.get("/")
 def root():
