@@ -11,6 +11,7 @@ type TrustTrendData = {
 };
 
 interface TrustResult {
+  
   trust_score: number;
   source: string;
   analysis: {
@@ -19,6 +20,8 @@ interface TrustResult {
     content: number;
     historical: number;
   };
+  risk_flags?: string[];
+  recommendations?: string[];
 }
 
 export default function TrustAnalyzer() {
@@ -39,31 +42,30 @@ export default function TrustAnalyzer() {
 
   /* ---------------- DERIVED DATA (NO NEW API) ---------------- */
 
- const trendData: TrustTrendData[] = result
-  ? [
-      { label: "Base", score: result.analysis.base },
-      {
-        label: "After Domain",
-        score: result.analysis.base + result.analysis.domain_signal,
-      },
-      {
-        label: "After Content",
-        score:
-          result.analysis.base +
-          result.analysis.domain_signal +
-          result.analysis.content,
-      },
-      { label: "Final Score", score: result.trust_score },
-    ]
-  : [];
+  const trendData: TrustTrendData[] = result
+    ? [
+        { label: "Base", score: result.analysis.base },
+        {
+          label: "After Domain",
+          score: result.analysis.base + result.analysis.domain_signal,
+        },
+        {
+          label: "After Content",
+          score:
+            result.analysis.base +
+            result.analysis.domain_signal +
+            result.analysis.content,
+        },
+        { label: "Final Score", score: result.trust_score },
+      ]
+    : [];
 
   return (
     <div className="bg-white border rounded-xl p-6 shadow-sm mb-10">
-      <h2 className="text-xl font-bold mb-2">
-        🔍 Analyze an Opportunity Link
-      </h2>
+      <h2 className="text-xl font-bold mb-2">🔍 Analyze an Opportunity Link</h2>
       <p className="text-sm text-gray-600 mb-4">
-        Paste any job, internship, or scholarship link to verify its trust score.
+        Paste any job, internship, or scholarship link to verify its trust
+        score.
       </p>
 
       {/* INPUT */}
@@ -93,9 +95,23 @@ export default function TrustAnalyzer() {
             </span>
           </div>
 
-          <p className="text-sm text-gray-700">
-            Source: {result.source}
-          </p>
+          {/* <p className="text-sm text-gray-700">Source: {result.source}</p>
+          <div className="text-sm text-gray-600 mt-2">
+            <p>Base Trust: {result.analysis.base}</p>
+            <p>Domain Signal: {result.analysis.domain_signal}</p>
+            <p>Content Heuristics: {result.analysis.content}</p>
+            <p>Historical Adjustment: {result.analysis.historical}</p>
+          </div> */}
+          {result.recommendations && (
+            <div className="mt-4 bg-gray-50 border rounded-lg p-3">
+              <h4 className="font-semibold text-sm mb-2">🔎 Recommendations</h4>
+              <ul className="list-disc ml-5 text-sm text-gray-700 space-y-1">
+                {result.recommendations.map((rec: string, index: number) => (
+                  <li key={index}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* CHARTS */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -104,6 +120,7 @@ export default function TrustAnalyzer() {
           </div>
 
           {/* EXPLANATION */}
+          <p className="text-sm text-gray-700">Source: {result.source}</p>
           <div className="text-sm text-gray-600">
             <p>Base Trust: {result.analysis.base}</p>
             <p>Domain Signal: {result.analysis.domain_signal}</p>

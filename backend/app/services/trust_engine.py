@@ -12,6 +12,16 @@ VERIFIED_DOMAINS = {
     "microsoft.com": 85,
     "meta.com": 80,
     "apple.com": 80,
+    "linkedin.com": 75,
+    "indeed.com": 70,
+    "scholarships.com": 70,
+    "internshala.com": 65,
+    "chegg.com": 60,
+    "coursera.org": 75,
+    "edx.org": 75,
+    "udemy.com": 70,
+    "khanacademy.org": 80,
+    "unstop.com": 65,
 }
 
 # ---------------------------
@@ -20,7 +30,7 @@ VERIFIED_DOMAINS = {
 def base_trust(source_type: str) -> int:
     """
     User-submitted links start with low trust.
-    Scraped / known sources get higher base.
+    Official / known sources get higher base.
     """
     if source_type == "official":
         return 60
@@ -50,7 +60,7 @@ def domain_signal(url: str) -> int:
 def content_heuristics(url: str) -> int:
     """
     Lightweight content check.
-    No scraping abuse.
+    No aggressive scraping.
     """
     try:
         res = requests.get(url, timeout=5)
@@ -77,12 +87,56 @@ def content_heuristics(url: str) -> int:
 # ---------------------------
 def historical_adjustment(domain: str) -> int:
     """
-    Simulated historical data.
-    Can be replaced by DB stats later.
+    Simulated historical trust.
+    Replace with DB stats later.
     """
     if domain in VERIFIED_DOMAINS:
         return 10
     return 0
+
+
+# ---------------------------
+# USER-FACING RECOMMENDATIONS
+# ---------------------------
+def generate_recommendations(score: int, analysis: dict) -> list[str]:
+    recs = []
+
+    if score < 40:
+        recs.append("Avoid sharing personal information.")
+        recs.append("Do not pay any registration or application fees.")
+        recs.append("Verify the organization on official websites.")
+    elif score < 70:
+        recs.append("Cross-check this opportunity on the company’s official website.")
+        recs.append("Confirm recruiter details before applying.")
+    else:
+        recs.append("Safe to explore further.")
+        recs.append("Apply using official channels only.")
+
+    if analysis["content"] < 0:
+        recs.append("Content contains suspicious or risky language.")
+
+    if analysis["domain_signal"] < 0:
+        recs.append("Website lacks strong security or reputation signals.")
+
+    return recs
+
+
+# ---------------------------
+# RISK FLAGS (Warnings)
+# ---------------------------
+def generate_risk_flags(analysis: dict) -> list[str]:
+    flags = []
+
+    if analysis["domain_signal"] < 0:
+        flags.append("Unverified or insecure domain")
+
+    if analysis["content"] < 0:
+        flags.append("Suspicious language detected")
+
+    if analysis["base"] <= 25:
+        flags.append("User-submitted link")
+
+    return flags
 
 
 # ---------------------------
@@ -92,14 +146,27 @@ def analyze_trust(url: str, source_type: str = "user") -> dict:
     parsed = urlparse(url)
     domain = parsed.netloc.replace("www.", "")
 
-    score = 0
+    # --- Step-wise scores ---
+    base = base_trust(source_type)
+    domain_sig = domain_signal(url)
+    content_sig = content_heuristics(url)
+    historical = historical_adjustment(domain)
 
-    score += base_trust(source_type)
-    score += domain_signal(url)
-    score += content_heuristics(url)
-    score += historical_adjustment(domain)
-
+    # --- Final score ---
+    score = base + domain_sig + content_sig + historical
     score = max(0, min(score, 100))
+
+    # ✅ Build analysis dict FIRST
+    analysis = {
+        "base": base,
+        "domain_signal": domain_sig,
+        "content": content_sig,
+        "historical": historical,
+    }
+
+    # ✅ Now safely use analysis
+    recommendations = generate_recommendations(score, analysis)
+    risk_flags = generate_risk_flags(analysis)
 
     return {
         "url": url,
@@ -107,10 +174,7 @@ def analyze_trust(url: str, source_type: str = "user") -> dict:
         "trust_score": score,
         "trust_label": label_from_score(score),
         "source": "User Submitted",
-        "analysis": {
-            "base": base_trust(source_type),
-            "domain_signal": domain_signal(url),
-            "content": content_heuristics(url),
-            "historical": historical_adjustment(domain),
-        }
+        "analysis": analysis,
+        "recommendations": recommendations,
+        "risk_flags": risk_flags,
     }
