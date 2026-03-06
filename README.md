@@ -186,6 +186,7 @@ User feedback loop for model retraining
 Advanced NLP models for deeper content analysis
 AI-driven opportunity recommendation engine
 
-👨‍💻 Autho
+👨‍💻 Author
+
 Aryan Pandey
 ScholarSync explores how machine learning can improve trust and transparency in opportunity discovery platforms.
